@@ -2,47 +2,46 @@
  * Sallai András, 2024-02-19
  * Copyright (c) 2024, Sallai András
  * Licenc: MIT
- * Refakotárlás esetén jelölje meg, ki, mikor.
+ * Refaktorálva: 2024-02-26, Gyüre Árpád, SZOFT II-1-E
  */
 
-// A fájl writer import
 import java.io.FileWriter;
 import java.io.IOException;
-// A print wirter import:
-import java.io.PrintWriter;
 
-
-/*
- * A fájkezelő osztály
- */
 public class Filehandler {
-    /* Az i() metódus kiírja a 
-    kapott költségeket fájlba.
-    */
-    public void i(Koltseg k) {
-        //Próba, hogy lefut-e.
+    private FileWriter fileWriter;
+
+    public Filehandler(String fileName) {
         try {
-            FileWriter fw = new FileWriter("adat.txt", true);
-            fw.write(k.szallitas.toString());
-            fw.write(":");
-            fw.write(k.uzlet.toString());
-            fw.write(":");
-            fw.write(k.javitas.toString());
-            fw.write("\n");
-            fw.close();
-            
+            fileWriter = new FileWriter(fileName, true);
         } catch (IOException e) {
-            // TODO: handle exception
-        }//A cath ág vége
-    }// Az i változó vége
-    /*
-     * Valahova lehetne tenni egy adatbázis-kezelő
-     * részt is. Ugyanaz a lenne a metódus ami,
-     * kiírja a fájlba és kiírja adatbázisba. 
-     * Mármint a metódus neve lenne ugyanaz.
-     * De lehetnek olyan általános osztály
-     * ahol a konstruktor paraméterként kapná
-     * meg az a típust, amivel tárolni kell.
-     * Mármint, hogy adatbázisba, vagy fájlba.
-     */
+            handleIOException(e);
+        }
+    }
+
+    public void writeData(Cost cost) {
+        try {
+            StringBuilder outData = new StringBuilder();
+            outData.append(cost.transport).append(":")
+                   .append(cost.business).append(":")
+                   .append(cost.repair).append("\n");
+            fileWriter.write(outData.toString());
+        } catch (IOException e) {
+            handleIOException(e);
+        }
+    }
+
+    public void closeFile() {
+        try {
+            if (fileWriter != null) {
+                fileWriter.close();
+            }
+        } catch (IOException e) {
+            handleIOException(e);
+        }
+    }
+
+    private void handleIOException(IOException e) {
+        e.printStackTrace();
+    }
 }
